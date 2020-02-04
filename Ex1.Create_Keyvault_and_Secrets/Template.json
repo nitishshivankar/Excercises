@@ -1,0 +1,392 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"keyVaultName": {
+			"type": "string"
+		},
+		
+		"eventHubKeyName":{
+			"type": "string",
+			"defaultValue": "psreventHubName"
+		},
+		"eventHubSecret":{
+			"type": "string",
+			"defaultValue": "timeseries-eh-psr"
+		},
+		
+		"ConsumerGrpKeyName":{
+			"type": "string",
+			"defaultValue": "psrconsumerGrpName"
+		},
+		"ConsumerGrpSecret":{
+			"type": "string",
+			"defaultValue": "cntnr-2.0.0"
+		},
+		"eventHubnamespaceKeyName":{
+			"type": "string",
+			"defaultValue": "psreventHubnamespace"
+		},
+		"eventHubnamespaceSecret":{
+			"type": "string",
+			"defaultValue": "dataq-ts-eh-psr"
+		},
+		"SASNameKeyName":{
+			"type": "string",
+			"defaultValue": "psrSASName"
+		},
+		"SASNameSecret":{
+			"type": "string",
+			"defaultValue": "ListenPolicy"
+		},
+		"SASKeyName":{
+			"type": "string",
+			"defaultValue": "psrSASKey"
+		},
+		"SASKeySecret":{
+			"type": "string",
+			"defaultValue": ""
+		},
+		"storageAccountNameKeyName":{
+			"type": "string",
+			"defaultValue": "storageAccountName"
+		},
+		"storageAccountNameSecret":{
+			"type": "string",
+			"defaultValue": "dataqtssa"
+		},
+		"storageAccountKey":{
+			"type": "string",
+			"defaultValue": "storageAccountKey"
+		},
+		"storageAccountKeySecret":{
+			"type": "string",
+			"defaultValue": ""
+		},
+		"storageContainerKeyName":{
+			"type": "string",
+			"defaultValue": "storageContainerName"
+		},
+		"storageContainerSecret":{
+			"type": "string",
+			"defaultValue": "dataqjava"
+		},
+		"rawSamplesEventHubKeyName":{
+			"type": "string",
+			"defaultValue": "rawSamplesEventHubName"
+		},
+		"rawSamplesEventHubSecret":{
+			"type": "string",
+			"defaultValue": "timeseries-eh-rawsample"
+		},
+		"rawSamplesEventHubnamespaceKeyName":{
+			"type": "string",
+			"defaultValue": "rawSamplesEventHubnamespace"
+		},
+		"rawSamplesEventHubnamespaceSecret":{
+			"type": "string",
+			"defaultValue": "dataq-ts-eh-rawsamples"
+		},
+		"rawSamplesSASNameKey":{
+			"type": "string",
+			"defaultValue": "rawSamplesSASName"
+		},
+		"rawSamplesSASNameSecret":{
+			"type": "string",
+			"defaultValue": "SendPolicy"
+		},
+		"rawSamplesSASKey":{
+			"type": "string",
+			"defaultValue": "rawSamplesSASKey"
+		},
+		"rawSamplesSASSecret":{
+			"type": "string",
+			"defaultValue": ""
+		},
+		"psrStatusEventHubNameKey":{
+			"type": "string",
+			"defaultValue": "psrStatusEventHubName"
+		},
+		"psrStatusEventHubNameSecret":{
+			"type": "string",
+			"defaultValue": "timeseries-eh-psrstatus"
+		},
+		"psrStatusEventHubnamespaceKey":{
+			"type": "string",
+			"defaultValue": "psrStatusEventHubnamespace"
+		},
+		"psrStatusEventHubnamespaceSecret":{
+			"type": "string",
+			"defaultValue": "dataq-ts-eh-status"
+		},
+		"psrStatusSASNameKey":{
+			"type": "string",
+			"defaultValue": "psrStatusSASName"
+		},
+		"psrStatusSASNameSecret":{
+			"type": "string",
+			"defaultValue": "SendPolicy"
+		},
+		"psrStatusSASKeyName":{
+			"type": "string",
+			"defaultValue": "psrStatusSASKey"
+		},
+		"psrStatusSASKeySecret":{
+			"type": "string",
+			"defaultValue": ""
+		}
+	},
+	"variables": {},
+	"resources": [
+	{
+		"type": "Microsoft.KeyVault/vaults",
+		"apiVersion": "2016-10-01",
+		"name": "[parameters('keyVaultName')]",
+		"location": "westindia",
+		"properties": {
+			"sku": {
+				"family": "A",
+				"name": "Standard"
+			},
+			"tenantId": "c160a942-c869-429f-8a96-f8c8296d57db",
+			"accessPolicies": [{
+				"tenantId": "c160a942-c869-429f-8a96-f8c8296d57db",
+				"objectId": "5d60082f-c408-4d01-9722-afbce5cd6d9e",
+				"permissions": {
+					"keys": [
+						"Get",
+						"List",
+						"Update",
+						"Create",
+						"Import",
+						"Delete",
+						"Recover",
+						"Backup",
+						"Restore"
+					],
+					"secrets": [
+						"Get",
+						"List",
+						"Set",
+						"Delete",
+						"Recover",
+						"Backup",
+						"Restore"
+					]
+				}
+			}],
+			"enabledForDeployment": true,
+			"enabledForDiskEncryption": true,
+			"enabledForTemplateDeployment": true,
+			"enableSoftDelete": true
+		}
+	},
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('eventHubKeyName'))]",
+		"apiVersion": "2016-10-01",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('eventHubSecret')]"
+		}
+    },
+
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('ConsumerGrpKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('ConsumerGrpSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('eventHubnamespaceKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('eventHubnamespaceSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('SASKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('SASKeySecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('SASNameKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('SASNameSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('storageAccountNameKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('storageAccountNameSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('storageAccountKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('storageAccountKeySecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('storageContainerKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('storageContainerSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('rawSamplesEventHubKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('rawSamplesEventHubSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('rawSamplesEventHubnamespaceKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('rawSamplesEventHubnamespaceSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('rawSamplesSASKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('rawSamplesSASSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('rawSamplesSASNameKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('rawSamplesSASNameSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('psrStatusEventHubNameKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('psrStatusEventHubNameSecret')]"
+		}
+    },
+	
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('psrStatusSASNameKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('psrStatusSASNameSecret')]"
+		}
+    },
+	
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('psrStatusSASKeyName'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('psrStatusSASKeySecret')]"
+		}
+    },
+	{
+		"type": "Microsoft.KeyVault/vaults/secrets",
+		"name": "[concat(parameters('keyVaultName'), '/', parameters('psrStatusEventHubnamespaceKey'))]",
+		"apiVersion": "2018-02-14",
+		"location": "westindia",
+		"dependsOn": [
+			"[resourceId('Microsoft.KeyVault/vaults', parameters('keyVaultName'))]"
+		],
+		"properties": {
+			"value": "[parameters('psrStatusEventHubnamespaceSecret')]"
+		}
+    }
+	]
+}
