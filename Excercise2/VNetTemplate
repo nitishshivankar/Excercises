@@ -8,6 +8,7 @@
 			"metadata":{
 				"description": "Name for virtual network."
 			}
+			
 		},
 		"vnetAddressPrefix": {
 			"type": "string",
